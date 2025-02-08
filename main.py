@@ -1,16 +1,13 @@
 import os
 import asyncio
-from pydantic import BaseModel, Field
+import json
+from models import Index
+from data_utils import save_to_csv
 from crawl4ai import AsyncWebCrawler, BrowserConfig, CacheMode, CrawlerRunConfig
 from crawl4ai.extraction_strategy import LLMExtractionStrategy
 from dotenv import load_dotenv
 
 load_dotenv()
-
-class OpenAIModelFee(BaseModel):
-    country: str = Field(..., description="Flag of the index.")
-    name: str = Field(..., description="Name of the index.")
-    last_value: str = Field(..., description="Last value of the index.")    
 
 async def extract_structured_data_using_llm(
     provider: str, api_token: str = None, extra_headers: dict[str, str] = None
@@ -34,7 +31,7 @@ async def extract_structured_data_using_llm(
         extraction_strategy=LLMExtractionStrategy(
             provider=provider,
             api_token=api_token,
-            schema=OpenAIModelFee.model_json_schema(),
+            schema=Index.model_json_schema(),
             extraction_type="schema",
             instruction="""From the crawled content, extract all items on the table. Get names along with their flags (country) and last value. 
             Do not miss any models in the entire content.""",
@@ -47,8 +44,15 @@ async def extract_structured_data_using_llm(
             url="https://www.investing.com/indices/major-indices", config=crawler_config
         )
         print(f"\n--- Results started ---")
-        print(result.extracted_content)
-        print(f"\n--- Results finished ---")
+        # Parse the JSON string into a list of dictionaries
+        try:
+            data = json.loads(result.extracted_content)
+            save_to_csv(data, "complete_indexes.csv")
+            print(f"\n--- Results finished ---")
+        except json.JSONDecodeError as e:
+            print(f"Error decoding JSON: {e}")
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
 
 if __name__ == "__main__":
     # Use ollama with llama3.3
