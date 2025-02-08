@@ -4,7 +4,7 @@ This project is a web crawler that extracts data from investing.com using the `c
 
 ## Description
 
-The script uses `crawl4ai` to fetch the HTML content of the specified URL and extract structured data using an LLM extraction strategy. It defines a Pydantic model `OpenAIModelFee` to represent the extracted data, which includes the country flag, name, and last value of each index.
+The script uses `crawl4ai` to fetch the HTML content of the specified URL and extract structured data using an LLM extraction strategy. It defines a Pydantic model `OpenAIModelFee` to represent the extracted data, which includes the country flag, name, and last value of each index. The extracted data is then saved to a CSV file.
 
 ## Dependencies
 
@@ -14,6 +14,7 @@ The project depends on the following libraries:
 - `pydantic`: For defining data models.
 - `python-dotenv`: For loading environment variables from a `.env` file.
 - `aiohttp`: For asynchronous HTTP requests.
+- `json`: For parsing JSON data.
 
 To install the dependencies, run:
 
@@ -57,11 +58,11 @@ To run the script, execute the following command:
 python main.py
 ```
 
-The script will fetch the data from investing.com, extract the relevant information, and print the extracted data to the console.
+The script will fetch the data from investing.com, extract the relevant information, and save it to a CSV file named `complete_indexes.csv`.
 
 ## crawl4ai
 
-`crawl4ai` is a powerful web crawling library that simplifies the process of extracting structured data from websites. It provides a high-level API for defining crawling configurations, extracting data using CSS selectors or XPath expressions, and handling various aspects of web crawling, such as caching, pagination, and request throttling.
+`crawl4ai` is a powerful web crawling library that simplifies the process of extracting structured data from websites. It provides a high-level API for defining crawling configurations, extracting data using LLMs, and handling various aspects of web crawling, such as caching, pagination, and request throttling.
 
 For more information about `crawl4ai`, please refer to the official documentation: [https://docs.crawl4ai.com/](https://docs.crawl4ai.com/)
 
